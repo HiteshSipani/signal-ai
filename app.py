@@ -25,13 +25,13 @@ try:
         gemini_api_key = st.secrets["GEMINI_API_KEY"]
     else:
         gemini_api_key = os.getenv("GEMINI_API_KEY")
-
+    
     if not gemini_api_key:
         st.error("⚠️ GEMINI_API_KEY not configured. Please add it to Streamlit secrets.")
         st.stop()
     else:
         genai.configure(api_key=gemini_api_key)
-
+        
 except Exception as e:
     st.error(f"❌ API Key configuration error: {e}")
     st.stop()
@@ -44,19 +44,19 @@ def upload_file_to_gemini(file_data, file_name: str):
         with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file_name)[1]) as tmp_file:
             tmp_file.write(file_data)
             tmp_file_path = tmp_file.name
-
+        
         uploaded_file = genai.upload_file(tmp_file_path, display_name=file_name)
-
+        
         while uploaded_file.state.name == "PROCESSING":
             time.sleep(2)
             uploaded_file = genai.get_file(uploaded_file.name)
-
+        
         if uploaded_file.state.name == "FAILED":
             return None
-
+            
         os.unlink(tmp_file_path)
         return uploaded_file
-
+        
     except Exception as e:
         st.error(f"File upload failed for {file_name}: {e}")
         return None
@@ -65,7 +65,7 @@ def analyze_with_gemini_files(gemini_files):
     """Enhanced Gemini analysis with comprehensive data extraction"""
     try:
         model = genai.GenerativeModel('gemini-2.5-pro')
-
+        
         analysis_prompt = """
         You are Signal AI, an expert venture capital analyst powered by multi-agent architecture. 
         Analyze the provided startup documents with the precision of a senior VC associate.
@@ -143,28 +143,28 @@ def analyze_with_gemini_files(gemini_files):
             }
         }
         """
-
+        
         content_parts = [analysis_prompt]
         content_parts.extend(gemini_files)
-
+        
         st.info("Signal AI analyzing with VC Associate precision...")
-
+        
         generation_config = genai.types.GenerationConfig(
             temperature=0.1,
             top_p=0.8,
             top_k=40,
             max_output_tokens=8000,
         )
-
+        
         response = model.generate_content(content_parts, generation_config=generation_config)
-
+        
         if response.text:
             st.success("Multi-agent analysis completed!")
             return response.text
         else:
             st.error("No response from Gemini")
             return "Error: No response"
-
+            
     except Exception as e:
         st.error(f"Analysis failed: {e}")
         return f"Error: {e}"
@@ -173,68 +173,68 @@ def process_files_with_gemini(uploaded_files):
     """Enhanced file processing with better error handling"""
     if not uploaded_files:
         return ""
-
+    
     gemini_files = []
-
+    
     for uploaded_file in uploaded_files:
         st.info(f"Processing {uploaded_file.name}...")
-
+        
         try:
             file_data = uploaded_file.read()
             uploaded_file.seek(0)
-
+            
             gemini_file = upload_file_to_gemini(file_data, uploaded_file.name)
-
+            
             if gemini_file:
                 gemini_files.append(gemini_file)
                 st.success(f"Successfully uploaded {uploaded_file.name}")
             else:
                 st.warning(f"Failed to upload {uploaded_file.name}")
-
+                
         except Exception as e:
             st.error(f"Error processing {uploaded_file.name}: {e}")
-
+    
     if not gemini_files:
         st.error("No files were successfully processed")
         return ""
-
+    
     analysis_result = analyze_with_gemini_files(gemini_files)
-
+    
     for gemini_file in gemini_files:
         try:
             genai.delete_file(gemini_file.name)
         except:
             pass
-
+    
     return analysis_result
 
 def clean_text_formatting(text: str) -> str:
     """Clean text to ensure consistent formatting"""
     if not text or text == "Not Available":
         return text
-
+    
     text = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
     text = re.sub(r'\*(.*?)\*', r'\1', text)
     text = re.sub(r'__(.*?)__', r'\1', text)
     text = re.sub(r'\s+', ' ', text)
-
+    
     if len(text) > 50:
         text = re.sub(r'([a-z])([A-Z])', r'\1 \2', text)
         text = re.sub(r'(\d)([A-Za-z])', r'\1 \2', text)
         text = re.sub(r'([A-Za-z])(\d)', r'\1 \2', text)
-
+    
     return text.strip()
 
 def parse_rating(rating_value):
     """Parse rating value to ensure it's a valid integer between 1-5"""
     if rating_value == "Not Available" or rating_value is None:
         return None
-
+    
     try:
         rating_str = str(rating_value)
         if '/' in rating_str:
             rating_str = rating_str.split('/')[0]
-
+        
         numbers = re.findall(r'\d+', rating_str)
         if numbers:
             rating_int = int(numbers[0])
@@ -242,7 +242,7 @@ def parse_rating(rating_value):
                 return rating_int
     except (ValueError, TypeError):
         pass
-
+    
     return None
 
 def parse_json_response(response_text: str) -> Dict:
@@ -252,30 +252,30 @@ def parse_json_response(response_text: str) -> Dict:
         cleaned = re.sub(r'```json\s*', '', cleaned, flags=re.MULTILINE)
         cleaned = re.sub(r'```\s*', '', cleaned, flags=re.MULTILINE) 
         cleaned = re.sub(r'```', '', cleaned)
-
+        
         json_start = cleaned.find('{')
         json_end = cleaned.rfind('}') + 1
-
+        
         if json_start != -1 and json_end > json_start:
             json_str = cleaned[json_start:json_end]
             json_str = re.sub(r',(\s*[}\]])', r'\1', json_str)
-
+            
             parsed_data = json.loads(json_str)
             st.success("JSON parsed successfully!")
             return parsed_data
-
+            
     except json.JSONDecodeError as e:
         st.warning(f"JSON parsing failed: {e}")
-
+    
     # Manual extraction fallback
     def extract_field(text: str, pattern: str) -> str:
         match = re.search(pattern, text, re.IGNORECASE | re.DOTALL)
         return match.group(1) if match else "Not Available"
-
+    
     def extract_array(text: str, pattern: str) -> List[str]:
         matches = re.findall(pattern, text, re.IGNORECASE | re.DOTALL)
         return [match.strip('"') for match in matches if match.strip()]
-
+    
     manual_data = {
         "company_overview": {
             "name": extract_field(response_text, r'"name":\s*"([^"]+)"'),
@@ -302,12 +302,12 @@ def parse_json_response(response_text: str) -> Dict:
             "rationale": extract_field(response_text, r'"rationale":\s*"([^"]+)"')
         }
     }
-
+    
     return manual_data
 
 def create_roadmap_timeline():
     """Create interactive roadmap timeline"""
-
+    
     # Updated roadmap data with correct dates
     roadmap_data = [
         {
@@ -371,10 +371,10 @@ def create_roadmap_timeline():
             "position": 5
         }
     ]
-
+    
     # Create connected timeline chart
     fig = go.Figure()
-
+    
     # Create the main timeline line
     x_positions = [item['position'] for item in roadmap_data]
     fig.add_trace(go.Scatter(
@@ -385,11 +385,11 @@ def create_roadmap_timeline():
         showlegend=False,
         hoverinfo='skip'
     ))
-
+    
     # Add milestone points and labels
     for item in roadmap_data:
         x_pos = item['position']
-
+        
         # Milestone point
         fig.add_trace(go.Scatter(
             x=[x_pos],
@@ -403,7 +403,7 @@ def create_roadmap_timeline():
             hovertemplate=f"<b>{item['title']}</b><br>{item['date']}<br>{item['description']}<extra></extra>",
             showlegend=False
         ))
-
+        
         # Status badge above the point
         fig.add_annotation(
             x=x_pos,
@@ -422,7 +422,7 @@ def create_roadmap_timeline():
             borderwidth=2,
             borderpad=4
         )
-
+        
         # Status indicator below
         status_emoji = "✅" if item['status'] == 'COMPLETED' else ("🔄" if item['status'] == 'IN PROGRESS' else "📋")
         fig.add_annotation(
@@ -436,7 +436,7 @@ def create_roadmap_timeline():
             borderwidth=1,
             borderpad=2
         )
-
+    
     # Update layout for better appearance
     fig.update_layout(
         title="Signal AI Development Roadmap - Connected Timeline",
@@ -459,26 +459,26 @@ def create_roadmap_timeline():
         paper_bgcolor="white",
         margin=dict(l=50, r=50, t=80, b=50)
     )
-
+    
     return fig, roadmap_data
 
 def display_investment_memo(parsed_data):
     """Display investment memo using 4-pillar framework"""
-
+    
     if "error" in parsed_data:
         st.error("Analysis Error")
         st.markdown(f"**Error:** {parsed_data.get('error', 'Unknown error')}")
         return
-
+    
     st.markdown("---")
     st.markdown("# Signal AI Investment Analysis")
-
+    
     # Company Header
     overview = parsed_data.get("company_overview", {})
     company_name = clean_text_formatting(overview.get("name", "Startup Analysis"))
-
+    
     col1, col2, col3, col4 = st.columns(4)
-
+    
     with col1:
         st.metric("Company", company_name)
     with col2:
@@ -491,25 +491,25 @@ def display_investment_memo(parsed_data):
         recommendation = parsed_data.get("recommendation", {})
         signal_score = recommendation.get("signal_score", "Not Available")
         decision = recommendation.get("investment_decision", "ANALYZE")
-
+        
         parsed_score = parse_rating(signal_score)
         if parsed_score:
             st.metric("Signal Score", f"{parsed_score}/5", delta=decision)
         else:
             st.metric("Signal Score", "N/A", delta=decision)
-
+    
     # Value Proposition
     one_liner = overview.get("one_liner", "")
     if one_liner and one_liner != "Not Available":
         st.info(f"**Value Proposition:** {one_liner}")
-
+    
     # FOUR PILLARS FRAMEWORK
     st.markdown("## Investment Analysis: Four Pillars Framework")
-
+    
     # Pillar 1: Founder Profile
     st.markdown("### 1. Founder Profile & Market Fit")
     founders = parsed_data.get("founders", [])
-
+    
     if founders:
         for founder in founders:
             if isinstance(founder, dict):
@@ -517,7 +517,7 @@ def display_investment_memo(parsed_data):
                 role = founder.get('role', 'Role not specified')
                 background = founder.get('background', 'Background not available')
                 market_fit = founder.get('founder_market_fit', 'Assessment not available')
-
+                
                 with st.expander(f"{name} - {role}", expanded=True):
                     col1, col2 = st.columns(2)
                     with col1:
@@ -526,100 +526,100 @@ def display_investment_memo(parsed_data):
                         st.markdown(f"**Market Fit:** {market_fit}")
     else:
         st.info("Founder profiles not found in analysis")
-
+    
     # Pillar 2: Problem & Market Size
     st.markdown("### 2. Problem & Market Opportunity")
     problem_market = parsed_data.get("problem_and_market", {})
-
+    
     col1, col2 = st.columns(2)
     with col1:
         problem = problem_market.get('problem_statement', 'Not analyzed')
         st.markdown(f"**Problem Statement:** {problem}")
-
+        
         target_customer = problem_market.get('target_customer', 'Not specified')
         st.markdown(f"**Target Customer:** {target_customer}")
-
+    
     with col2:
         tam = problem_market.get('market_size_tam', 'Not analyzed')
         st.markdown(f"**Total Addressable Market:** {tam}")
-
+        
         growth_rate = problem_market.get('market_growth_rate', 'Not analyzed')
         st.markdown(f"**Market Growth Rate:** {growth_rate}")
-
+    
     # Pillar 3: Unique Differentiator
     st.markdown("### 3. Unique Differentiator & Competitive Moat")
     differentiator = parsed_data.get("unique_differentiator", {})
-
+    
     col1, col2 = st.columns(2)
     with col1:
         core_tech = differentiator.get('core_technology', 'Not specified')
         st.markdown(f"**Core Technology:** {core_tech}")
-
+        
         moat = differentiator.get('competitive_moat', 'Not analyzed')
         st.markdown(f"**Competitive Moat:** {moat}")
-
+    
     with col2:
         ip_assets = differentiator.get('ip_assets', 'Not specified')
         st.markdown(f"**IP & Assets:** {ip_assets}")
-
+        
         barriers = differentiator.get('barriers_to_entry', 'Not analyzed')
         st.markdown(f"**Barriers to Entry:** {barriers}")
-
+    
     # Pillar 4: Team & Traction
     st.markdown("### 4. Team & Traction Metrics")
     traction = parsed_data.get("team_and_traction", {})
-
+    
     # Traction Metrics
     col1, col2, col3 = st.columns(3)
     with col1:
         customers = traction.get('customer_count', 'Not Available')
         st.metric("Customers", customers)
-
+    
     with col2:
         arr = traction.get('arr_mrr', 'Not Available')
         st.metric("ARR/MRR", arr)
-
+    
     with col3:
         growth = traction.get('growth_metrics', 'Not Available')
         st.metric("Growth Rate", growth)
-
+    
     # Key customers and partnerships
     key_customers = traction.get('key_customers', [])
     partnerships = traction.get('partnerships', [])
-
+    
     if key_customers:
         st.markdown("**Key Customers:**")
         customer_text = ", ".join(key_customers)
         st.markdown(f"> {customer_text}")
-
+    
     if partnerships:
         st.markdown("**Strategic Partnerships:**")
         partnership_text = ", ".join(partnerships)
         st.markdown(f"> {partnership_text}")
-
+    
     # FINANCIAL DASHBOARD
     st.markdown("## Financial Overview")
     financials = parsed_data.get("financials", {})
-
+    
     col1, col2, col3, col4 = st.columns(4)
-
+    
     metrics = [
         ("Current Revenue", financials.get('current_revenue', 'Not Available')),
         ("Funding Ask", financials.get('current_ask', 'Not Available')),
         ("Valuation", financials.get('valuation', 'Not Available')),
         ("Runway", financials.get('runway', 'Not Available'))
     ]
-
+    
     for i, (label, value) in enumerate(metrics):
         with [col1, col2, col3, col4][i]:
             st.metric(label, value)
-
+    
     # INVESTMENT THESIS
     st.markdown("## Investment Thesis")
     thesis = parsed_data.get("investment_thesis", {})
-
+    
     col1, col2 = st.columns(2)
-
+    
     with col1:
         st.markdown("### Strengths")
         strengths = thesis.get("strengths", [])
@@ -628,7 +628,7 @@ def display_investment_memo(parsed_data):
                 st.success(f"✓ {strength}")
         else:
             st.info("Strengths analysis not available")
-
+    
     with col2:
         st.markdown("### Risks") 
         risks = thesis.get("risks", [])
@@ -637,23 +637,23 @@ def display_investment_memo(parsed_data):
                 st.warning(f"⚠ {risk}")
         else:
             st.info("Risk analysis not available")
-
+    
     # FINAL RECOMMENDATION
     st.markdown("## Final Investment Recommendation")
-
+    
     recommendation = parsed_data.get("recommendation", {})
     decision = recommendation.get("investment_decision", "ANALYZE")
     rationale = recommendation.get("rationale", "No rationale provided")
-
+    
     if decision == "STRONG BUY":
         st.success(f"### {decision}")
     elif decision in ["BUY", "CONSIDER"]:
         st.warning(f"### {decision}")
     else:
         st.error(f"### {decision}")
-
+    
     st.markdown(f"**Rationale:** {rationale}")
-
+    
     # Download option
     st.markdown("---")
     memo_text = json.dumps(parsed_data, indent=2)
@@ -843,13 +843,8 @@ st.markdown("""
         box-shadow: 0 12px 35px rgba(6, 182, 212, 0.6);
     }
     
-    /* File Upload */
     /* File Upload Styling */
     .stFileUploader {
-        background: rgba(15, 23, 42, 0.8);
-        border: 2px dashed rgba(6, 182, 212, 0.5);
-        border-radius: 16px;
-        padding: 2rem;
         background: rgba(15, 23, 42, 0.8) !important;
         border: 2px dashed rgba(6, 182, 212, 0.5) !important;
         border-radius: 16px !important;
@@ -914,7 +909,6 @@ st.markdown("""
     
     /* Fix Streamlit Components for Dark Theme */
     
-    /* Expander/Collapsible styling */
     /* Enhanced Expander/Collapsible styling with states */
     .streamlit-expanderHeader {
         background: rgba(15, 23, 42, 0.8) !important;
@@ -946,7 +940,6 @@ st.markdown("""
     
     .streamlit-expanderContent {
         background: rgba(15, 23, 42, 0.9) !important;
-        border: 1px solid rgba(6, 182, 212, 0.2) !important;
         border: 1px solid rgba(6, 182, 212, 0.3) !important;
         border-top: none !important;
         border-radius: 0 0 12px 12px !important;
@@ -957,8 +950,58 @@ st.markdown("""
     /* Fix expander text */
     .streamlit-expanderContent p, 
     .streamlit-expanderContent div,
-    .streamlit-expanderContent span {
+    .streamlit-expanderContent span,
+    .streamlit-expanderContent [data-testid] {
         color: #e2e8f0 !important;
+        background: transparent !important;
+    }
+    
+    /* Specific fix for file list in expanders */
+    .streamlit-expanderContent [data-testid="column"] {
+        background: transparent !important;
+        color: #e2e8f0 !important;
+    }
+    
+    .streamlit-expanderContent [data-testid="column"] > div {
+        color: #e2e8f0 !important;
+        background: transparent !important;
+    }
+    
+    /* Force all text in expanders to be visible */
+    details[open] div,
+    details[open] span,
+    details[open] p {
+        color: #e2e8f0 !important;
+        background: transparent !important;
+    }
+    
+    /* Aggressive fix for all expander content */
+    .streamlit-expanderContent * {
+        color: #e2e8f0 !important;
+        background: transparent !important;
+    }
+    
+    /* Specific targeting for Streamlit components in expanders */
+    .streamlit-expanderContent .stText,
+    .streamlit-expanderContent .stMarkdown,
+    .streamlit-expanderContent [data-testid="stText"],
+    .streamlit-expanderContent [data-testid="stMarkdown"] {
+        color: #e2e8f0 !important;
+        background: transparent !important;
+    }
+    
+    /* Target all possible text containers */
+    .streamlit-expanderContent .element-container,
+    .streamlit-expanderContent .stColumn,
+    .streamlit-expanderContent [data-testid="column"] {
+        background: transparent !important;
+    }
+    
+    .streamlit-expanderContent .element-container *,
+    .streamlit-expanderContent .stColumn *,
+    .streamlit-expanderContent [data-testid="column"] * {
+        color: #e2e8f0 !important;
+        background: transparent !important;
     }
     
     /* Metric components */
@@ -1179,7 +1222,7 @@ with tab1:
         </div>
     </div>
     """, unsafe_allow_html=True)
-
+    
     # Value Proposition
     st.markdown("""
     <div class="value-prop-card">
@@ -1194,10 +1237,10 @@ with tab1:
         </p>
     </div>
     """, unsafe_allow_html=True)
-
+    
     # Problem Statement and Solution (original content)
     col1, col2 = st.columns(2)
-
+    
     with col1:
         st.markdown("## The Problem We're Solving")
         st.markdown("""
@@ -1208,7 +1251,7 @@ with tab1:
         - **Deal flow bottlenecks** preventing opportunity evaluation
         - **Manual processes** that don't scale with modern deal volume
         """)
-
+        
         st.markdown("## Our Target Market")
         st.markdown("""
         - **Early-stage VC firms** (Seed to Series A)
@@ -1217,7 +1260,7 @@ with tab1:
         - **Corporate venture arms**
         - **Investment banks** (tech coverage)
         """)
-
+    
     with col2:
         st.markdown("## The Signal AI Solution")
         st.markdown("""
@@ -1227,7 +1270,7 @@ with tab1:
         - **Research Agent** (Vertex AI + Search) - Market intelligence
         - **Interviewer Agent** (Future) - Founder conversations
         """)
-
+        
         st.markdown("## Competitive Advantages")
         st.markdown("""
         - **Specialized workflow** vs generic AI tools
@@ -1236,10 +1279,10 @@ with tab1:
         - **Industry-specific training** on VC terminology
         - **90% time reduction** with higher accuracy
         """)
-
+    
     # Four Pillars Framework (original content)
     st.markdown("## Analysis Framework: Four Investment Pillars")
-
+    
     pillars = [
         {
             "title": "1. Founder Profile & Market Fit",
@@ -1262,7 +1305,7 @@ with tab1:
             "icon": "📈"
         }
     ]
-
+    
     cols = st.columns(2)
     for i, pillar in enumerate(pillars):
         with cols[i % 2]:
@@ -1272,19 +1315,19 @@ with tab1:
                 <p>{pillar['description']}</p>
             </div>
             """, unsafe_allow_html=True)
-
+    
     # Impact Metrics (original content)
     st.markdown("## Expected Impact")
-
+    
     col1, col2, col3, col4 = st.columns(4)
-
+    
     impact_metrics = [
         ("Time Reduction", "90%", "From 118 hours to 5 minutes"),
         ("Analysis Depth", "5x", "More comprehensive than manual"),
         ("Deal Throughput", "20x", "Evaluate more opportunities"),
         ("Decision Speed", "95%", "Faster investment decisions")
     ]
-
+    
     for i, (metric, value, description) in enumerate(impact_metrics):
         with [col1, col2, col3, col4][i]:
             st.metric(metric, value, description)
@@ -1300,17 +1343,17 @@ with tab2:
         </div>
     </div>
     """, unsafe_allow_html=True)
-
+    
     # Create and display timeline
     timeline_fig, roadmap_data = create_roadmap_timeline()
     st.plotly_chart(timeline_fig, use_container_width=True)
-
+    
     # Detailed roadmap phases (original content)
     st.markdown("## Detailed Development Phases")
-
+    
     for item in roadmap_data:
         status_class = item['status'].lower().replace(' ', '-')
-
+        
         st.markdown(f"""
         <div class="roadmap-phase {status_class}">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -1322,17 +1365,17 @@ with tab2:
             <p style="margin-bottom: 1rem; color: #94a3b8;"><strong>{item['date']}</strong> - {item['description']}</p>
         </div>
         """, unsafe_allow_html=True)
-
+        
         if item['achievements']:
             st.markdown("**Key Achievements:**")
             for achievement in item['achievements']:
                 st.markdown(f"• {achievement}")
-
+        
         st.markdown("---")
-
+    
     # Technical Architecture Evolution (original content)
     st.markdown("## Technical Architecture Evolution")
-
+    
     arch_phases = [
         {
             "phase": "Current (Sep 2025)",
@@ -1353,7 +1396,7 @@ with tab2:
             "color": "#6B7280"
         }
     ]
-
+    
     for arch in arch_phases:
         with st.expander(f"{arch['phase']}: {arch['title']}", expanded=False):
             st.markdown("**Technology Stack:**")
@@ -1371,7 +1414,7 @@ with tab3:
         </div>
     </div>
     """, unsafe_allow_html=True)
-
+    
     # Initialize session state (original)
     if 'analysis_started' not in st.session_state:
         st.session_state.analysis_started = False
@@ -1379,21 +1422,21 @@ with tab3:
         st.session_state.analysis_complete = False
     if 'parsed_data' not in st.session_state:
         st.session_state.parsed_data = None
-
+    
     # File upload section (original functionality)
     st.markdown("## Upload Company Data Room")
     st.info("**Current:** Single-agent processing with Gemini 2.5 Pro | **Coming Oct:** Multi-agent architecture with specialized models")
-
+    
     uploaded_files = st.file_uploader(
         "Upload startup documents for comprehensive analysis",
         accept_multiple_files=True,
         type=['pdf', 'docx', 'doc', 'txt', 'csv', 'png', 'jpg', 'jpeg'],
         help="Pitch deck, financial reports, founder bios, market analysis, traction data, etc."
     )
-
+    
     if uploaded_files:
         st.success(f"✅ {len(uploaded_files)} files ready for Signal AI processing")
-
+        
         with st.expander("View uploaded files", expanded=True):
             for file in uploaded_files:
                 col1, col2, col3 = st.columns([3, 1, 1])
@@ -1403,49 +1446,48 @@ with tab3:
                     st.write(f"{file.size:,} bytes")
                 with col3:
                     st.write("✓ Ready")
-
+    
     # Analysis section (original functionality)
     if uploaded_files:
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             if st.button("🚀 Generate Investment Analysis", type="primary", use_container_width=True):
                 st.session_state.analysis_started = True
-
+                
                 progress_bar = st.progress(0)
                 status_text = st.empty()
-
+                
                 status_text.markdown("**Initializing Signal AI multi-agent workflow...**")
                 progress_bar.progress(20)
-
+                
                 # Process with enhanced Gemini (original function)
                 analysis_result = process_files_with_gemini(uploaded_files)
-
+                
                 progress_bar.progress(70)
                 status_text.markdown("**Signal AI performing comprehensive 4-pillar analysis...**")
-
+                
                 if analysis_result and "error" not in analysis_result.lower():
                     parsed_data = parse_json_response(analysis_result)
                     st.session_state.parsed_data = parsed_data
-
+                    
                     progress_bar.progress(100)
                     status_text.markdown("**✅ Investment analysis complete - 90% time reduction achieved!**")
                     st.session_state.analysis_complete = True
-
+                    
                     st.success("🎯 Signal AI Analysis Complete!")
-                    st.balloons()
                 else:
                     st.error(f"Analysis failed: {analysis_result}")
-
+    
     # Display results using original 4-pillar framework
     if st.session_state.analysis_complete and st.session_state.parsed_data:
         display_investment_memo(st.session_state.parsed_data)
-
+    
     elif not st.session_state.analysis_started:
         st.info("👆 Upload your startup's data room above to experience Signal AI's 90% time reduction")
-
+        
         # Demo features preview (original content)
         st.markdown("## Signal AI Analysis Features")
-
+        
         features = [
             ("🏗️ Four-Pillar Framework", "Founder Profile • Problem & Market • Differentiator • Team & Traction"),
             ("📊 Financial Intelligence", "ARR/MRR extraction • Burn rate analysis • Runway calculation • Unit economics"),
@@ -1453,7 +1495,7 @@ with tab3:
             ("🔍 Market Intelligence", "Real-time competitive data • TAM validation • Growth rate analysis"),
             ("⚡ Instant Insights", "5-minute analysis • Signal scoring • Investment recommendation • Risk assessment")
         ]
-
+        
         for feature, description in features:
             st.markdown(f"**{feature}**")
             st.markdown(f"> {description}")
