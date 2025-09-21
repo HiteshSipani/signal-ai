@@ -660,12 +660,20 @@ st.markdown("""
     }
     
     .block-container {
-        padding-top: 1rem;
+        padding-top: 2rem;
         padding-bottom: 0rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
         max-width: 100%;
         font-family: 'Inter', sans-serif !important;
+    }
+    
+    /* Fix for mobile/narrow screens */
+    @media (max-width: 768px) {
+        .block-container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
     }
     
     /* Ensure tabs are visible and properly styled */
@@ -675,17 +683,22 @@ st.markdown("""
         border-radius: 8px;
         padding: 4px;
         margin-bottom: 1rem;
+        overflow-x: auto;
+        width: 100%;
     }
     
     .stTabs [data-baseweb="tab"] {
         height: 50px;
-        padding: 0px 24px;
+        padding: 0px 20px;
         background-color: transparent;
         border-radius: 6px;
         color: #6b7280;
         font-weight: 500;
-        font-size: 16px;
+        font-size: 14px;
         border: none;
+        white-space: nowrap;
+        min-width: fit-content;
+        flex-shrink: 0;
     }
     
     .stTabs [aria-selected="true"] {
