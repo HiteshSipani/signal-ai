@@ -994,19 +994,19 @@ with tab2:
     
     arch_phases = [
         {
-            "phase": "Current (Q1 2025)",
+            "phase": "Current (Q3 2025)",
             "title": "Single-Agent Foundation",
             "tech": ["Gemini 2.5 Pro API", "Streamlit Frontend", "Basic JSON Parsing", "Manual File Processing"],
             "color": "#10B981"
         },
         {
-            "phase": "Next (Q2 2025)", 
+            "phase": "Next (Q3-Q4 2025)", 
             "title": "Multi-Agent System",
             "tech": ["Vertex AI Pipelines", "Gemini 2.0 Pro (Supervisor)", "Fine-tuned Gemma (Specialist)", "Agent Builder (Research)"],
             "color": "#F59E0B"
         },
         {
-            "phase": "Future (Q3-Q4 2025)",
+            "phase": "Future (Q4 2025)",
             "title": "Enterprise Platform", 
             "tech": ["Cloud Storage Integration", "Real-time APIs", "Conversational AI", "Advanced Analytics", "Team Collaboration"],
             "color": "#6B7280"
@@ -1119,7 +1119,7 @@ with tab3:
 # Footer
 st.markdown("""
 <div style="text-align: center; padding: 2rem 0; border-top: 1px solid #e5e7eb; margin-top: 3rem; color: #6b7280;">
-    <p><strong>Signal AI</strong> - VC Associate-in-a-Box | Multi-Agent Architecture on Google Cloud</p>
-    <p style="font-size: 0.8rem;">© 2025 Signal AI. From 118 hours to 5 minutes. Built with Vertex AI.</p>
+    <p><strong>Signal AI</strong> - VC Associate-in-a-Box | Multi-Agent Architecture</p>
+    <p style="font-size: 0.8rem;">© 2025 Signal AI. Built by KAEOS</p>
 </div>
 """, unsafe_allow_html=True)
