@@ -851,26 +851,215 @@ st.markdown("""
         padding: 2rem;
     }
     
+    /* Fix Streamlit Components for Dark Theme */
+    
+    /* Expander/Collapsible styling */
+    .streamlit-expanderHeader {
+        background: rgba(15, 23, 42, 0.8) !important;
+        border: 1px solid rgba(6, 182, 212, 0.3) !important;
+        border-radius: 12px !important;
+        color: #e2e8f0 !important;
+    }
+    
+    .streamlit-expanderContent {
+        background: rgba(15, 23, 42, 0.9) !important;
+        border: 1px solid rgba(6, 182, 212, 0.2) !important;
+        border-top: none !important;
+        border-radius: 0 0 12px 12px !important;
+        color: #e2e8f0 !important;
+    }
+    
+    /* Fix expander text */
+    .streamlit-expanderContent p, 
+    .streamlit-expanderContent div,
+    .streamlit-expanderContent span {
+        color: #e2e8f0 !important;
+    }
+    
+    /* Metric components */
+    [data-testid="metric-container"] {
+        background: rgba(15, 23, 42, 0.8) !important;
+        border: 1px solid rgba(34, 197, 94, 0.3) !important;
+        border-radius: 16px !important;
+        padding: 1rem !important;
+        backdrop-filter: blur(10px);
+    }
+    
+    [data-testid="metric-container"] > div {
+        color: #e2e8f0 !important;
+    }
+    
+    [data-testid="metric-container"] label {
+        color: #94a3b8 !important;
+        font-weight: 600 !important;
+    }
+    
+    [data-testid="metric-container"] [data-testid="metric-value"] {
+        color: #06b6d4 !important;
+        font-size: 1.5rem !important;
+        font-weight: 700 !important;
+        text-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
+    }
+    
+    [data-testid="metric-container"] [data-testid="metric-delta"] {
+        color: #22c55e !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Fix all text elements */
+    .stMarkdown, .stText, p, div, span, li {
+        color: #e2e8f0 !important;
+    }
+    
+    /* Fix headers */
+    h1, h2, h3, h4, h5, h6 {
+        color: #e2e8f0 !important;
+    }
+    
+    /* Code blocks */
+    .stCode {
+        background: rgba(15, 23, 42, 0.9) !important;
+        border: 1px solid rgba(6, 182, 212, 0.3) !important;
+        border-radius: 8px !important;
+        color: #e2e8f0 !important;
+    }
+    
+    /* Dataframes and tables */
+    .stDataFrame {
+        background: rgba(15, 23, 42, 0.9) !important;
+        border: 1px solid rgba(6, 182, 212, 0.3) !important;
+        border-radius: 12px !important;
+    }
+    
+    .stDataFrame table {
+        background: transparent !important;
+        color: #e2e8f0 !important;
+    }
+    
+    .stDataFrame th {
+        background: rgba(6, 182, 212, 0.2) !important;
+        color: #06b6d4 !important;
+        font-weight: 600 !important;
+    }
+    
+    .stDataFrame td {
+        background: rgba(15, 23, 42, 0.5) !important;
+        color: #e2e8f0 !important;
+        border-color: rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    /* Selectbox and other inputs */
+    .stSelectbox > div > div {
+        background: rgba(15, 23, 42, 0.9) !important;
+        border: 1px solid rgba(6, 182, 212, 0.3) !important;
+        border-radius: 8px !important;
+        color: #e2e8f0 !important;
+    }
+    
+    .stTextInput > div > div > input {
+        background: rgba(15, 23, 42, 0.9) !important;
+        border: 1px solid rgba(6, 182, 212, 0.3) !important;
+        border-radius: 8px !important;
+        color: #e2e8f0 !important;
+    }
+    
+    /* Download button */
+    .stDownloadButton > button {
+        background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 0.75rem 1.5rem !important;
+        font-weight: 600 !important;
+        box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4) !important;
+    }
+    
+    .stDownloadButton > button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 12px 35px rgba(34, 197, 94, 0.6) !important;
+    }
+    
     /* Success/Error Messages */
     .stSuccess {
-        background: rgba(34, 197, 94, 0.1);
-        border: 1px solid rgba(34, 197, 94, 0.3);
-        border-radius: 12px;
-        color: #22c55e;
+        background: rgba(34, 197, 94, 0.1) !important;
+        border: 1px solid rgba(34, 197, 94, 0.3) !important;
+        border-radius: 12px !important;
+        color: #22c55e !important;
     }
     
     .stError {
-        background: rgba(239, 68, 68, 0.1);
-        border: 1px solid rgba(239, 68, 68, 0.3);
-        border-radius: 12px;
-        color: #ef4444;
+        background: rgba(239, 68, 68, 0.1) !important;
+        border: 1px solid rgba(239, 68, 68, 0.3) !important;
+        border-radius: 12px !important;
+        color: #ef4444 !important;
     }
     
     .stInfo {
-        background: rgba(6, 182, 212, 0.1);
-        border: 1px solid rgba(6, 182, 212, 0.3);
-        border-radius: 12px;
-        color: #06b6d4;
+        background: rgba(6, 182, 212, 0.1) !important;
+        border: 1px solid rgba(6, 182, 212, 0.3) !important;
+        border-radius: 12px !important;
+        color: #06b6d4 !important;
+    }
+    
+    .stWarning {
+        background: rgba(245, 158, 11, 0.1) !important;
+        border: 1px solid rgba(245, 158, 11, 0.3) !important;
+        border-radius: 12px !important;
+        color: #f59e0b !important;
+    }
+    
+    /* Progress bar container */
+    .stProgress > div > div {
+        background: rgba(15, 23, 42, 0.8) !important;
+        border-radius: 10px !important;
+    }
+    
+    /* Sidebar (if used) */
+    .css-1d391kg {
+        background: rgba(15, 23, 42, 0.95) !important;
+        border-right: 1px solid rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    /* Plotly charts dark theme */
+    .js-plotly-plot {
+        background: transparent !important;
+    }
+    
+    /* Force text color for markdown content */
+    .stMarkdown p,
+    .stMarkdown li,
+    .stMarkdown span,
+    .stMarkdown div {
+        color: #e2e8f0 !important;
+    }
+    
+    /* Force header colors */
+    .stMarkdown h1 { color: #06b6d4 !important; }
+    .stMarkdown h2 { color: #06b6d4 !important; }
+    .stMarkdown h3 { color: #e2e8f0 !important; }
+    .stMarkdown h4 { color: #e2e8f0 !important; }
+    
+    /* Links */
+    a {
+        color: #06b6d4 !important;
+    }
+    
+    a:hover {
+        color: #22c55e !important;
+    }
+    
+    /* Checkbox and radio */
+    .stCheckbox > label {
+        color: #e2e8f0 !important;
+    }
+    
+    .stRadio > label {
+        color: #e2e8f0 !important;
+    }
+    
+    /* Slider */
+    .stSlider > label {
+        color: #e2e8f0 !important;
     }
     
     /* Roadmap Styling */
