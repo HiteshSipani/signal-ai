@@ -668,6 +668,32 @@ st.markdown("""
         font-family: 'Inter', sans-serif !important;
     }
     
+    /* Ensure tabs are visible and properly styled */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        background-color: #f8fafc;
+        border-radius: 8px;
+        padding: 4px;
+        margin-bottom: 1rem;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        height: 50px;
+        padding: 0px 24px;
+        background-color: transparent;
+        border-radius: 6px;
+        color: #6b7280;
+        font-weight: 500;
+        font-size: 16px;
+        border: none;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background-color: white;
+        color: #667eea;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
     .main-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         padding: 3rem 2rem;
