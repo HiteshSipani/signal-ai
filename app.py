@@ -723,37 +723,9 @@ st.markdown("""
     }
     
     .main .block-container {
-        padding: 0.5rem 1rem;
+        padding: 2rem;
         max-width: 100%;
         background: transparent;
-    }
-    
-    /* Reduce default Streamlit spacing */
-    .element-container {
-        margin-bottom: 0.5rem !important;
-    }
-    
-    .stMarkdown {
-        margin-bottom: 0.5rem !important;
-    }
-    
-    .stHeader {
-        margin-bottom: 0.5rem !important;
-    }
-    
-    /* Remove excessive gaps between sections */
-    .block-container > div {
-        margin-bottom: 0.5rem !important;
-    }
-    
-    /* Reduce spacing around specific elements */
-    h1, h2, h3 {
-        margin-top: 1rem !important;
-        margin-bottom: 0.5rem !important;
-    }
-    
-    p {
-        margin-bottom: 0.5rem !important;
     }
     
     /* Hide Streamlit Elements */
@@ -798,55 +770,13 @@ st.markdown("""
     .hero-section {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         border-radius: 24px;
-        padding: 1.5rem 2rem;
+        padding: 4rem 2rem;
         text-align: center;
-        margin: 0.5rem 0;
+        margin: 2rem 0;
         border: 1px solid rgba(34, 197, 94, 0.3);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         position: relative;
         overflow: hidden;
-    }
-    
-    /* Aggressive spacing reduction for all Streamlit elements */
-    .stApp > div > div > div > div {
-        gap: 0.25rem !important;
-    }
-    
-    .stVerticalBlock {
-        gap: 0.25rem !important;
-    }
-    
-    .stHorizontalBlock {
-        gap: 0.5rem !important;
-    }
-    
-    /* Remove default margins from common elements */
-    .stButton {
-        margin-bottom: 0.25rem !important;
-    }
-    
-    .stSelectbox {
-        margin-bottom: 0.25rem !important;
-    }
-    
-    .stTextInput {
-        margin-bottom: 0.25rem !important;
-    }
-    
-    .stFileUploader {
-        margin-bottom: 0.5rem !important;
-    }
-    
-    .stInfo {
-        margin-bottom: 0.5rem !important;
-    }
-    
-    .stSuccess {
-        margin-bottom: 0.5rem !important;
-    }
-    
-    .stError {
-        margin-bottom: 0.5rem !important;
     }
     
     .hero-section::before {
@@ -883,8 +813,8 @@ st.markdown("""
         background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1));
         border: 1px solid rgba(139, 92, 246, 0.3);
         border-radius: 20px;
-        padding: 1.5rem;
-        margin: 1rem 0;
+        padding: 2rem;
+        margin: 2rem 0;
         text-align: center;
         backdrop-filter: blur(10px);
     }
@@ -894,8 +824,8 @@ st.markdown("""
         background: rgba(15, 23, 42, 0.8);
         border: 2px solid rgba(6, 182, 212, 0.3);
         border-radius: 20px;
-        padding: 1.5rem;
-        margin: 0.5rem 0;
+        padding: 2rem;
+        margin: 1rem 0;
         transition: all 0.3s ease;
         backdrop-filter: blur(10px);
     }
@@ -911,7 +841,7 @@ st.markdown("""
         background: rgba(15, 23, 42, 0.8);
         border: 1px solid rgba(34, 197, 94, 0.3);
         border-radius: 20px;
-        padding: 1.5rem;
+        padding: 2rem;
         text-align: center;
         transition: all 0.3s ease;
         backdrop-filter: blur(10px);
@@ -964,7 +894,7 @@ st.markdown("""
         background: rgba(15, 23, 42, 0.8) !important;
         border: 2px dashed rgba(6, 182, 212, 0.5) !important;
         border-radius: 16px !important;
-        padding: 1rem !important;
+        padding: 2rem !important;
     }
     
     .stFileUploader > div {
@@ -1027,7 +957,7 @@ st.markdown("""
     
     /* Enhanced Expander/Collapsible styling with states */
     .streamlit-expanderHeader {
-        background: rgba(15, 23, 42, 0.8) !important;
+        background: rgba(6, 182, 212, 0.1) !important;
         border: 1px solid rgba(6, 182, 212, 0.3) !important;
         border-radius: 12px !important;
         color: #e2e8f0 !important;
@@ -1044,7 +974,7 @@ st.markdown("""
     
     .streamlit-expanderHeader[aria-expanded="false"] {
         border-radius: 12px !important;
-        background: rgba(15, 23, 42, 0.6) !important;
+        background: rgba(6, 182, 212, 0.1) !important;
     }
     
     .streamlit-expanderHeader[aria-expanded="true"] {
@@ -1213,7 +1143,7 @@ st.markdown("""
     
     /* Fix tooltip visibility */
     .stTooltipIcon {
-        color: #94a3b8 !important;
+        color: #ffffff !important;
         opacity: 0.8 !important;
     }
     
@@ -1242,7 +1172,7 @@ st.markdown("""
         background: rgba(15, 23, 42, 0.95) !important;
         border: 1px solid rgba(6, 182, 212, 0.4) !important;
         border-radius: 8px !important;
-        color: #e2e8f0 !important;
+        color: #fcfcfc !important;
         padding: 1rem !important;
         font-size: 0.9rem !important;
         line-height: 1.4 !important;
@@ -1270,29 +1200,24 @@ st.markdown("""
         line-height: 1.3 !important;
     }
     
-    /* Specific fixes for long text in containers - More Aggressive */
+    /* Specific fixes for long text in containers */
     .element-container {
         width: 100% !important;
-        min-width: 300px !important;
+        min-width: 200px !important;
         overflow: visible !important;
-        flex: 1 1 300px !important;
     }
     
     .stColumn {
         width: 100% !important;
-        min-width: 300px !important;
-        max-width: none !important;
+        min-width: 250px !important;
         overflow: visible !important;
-        flex: 1 1 300px !important;
     }
     
     [data-testid="column"] {
         width: 100% !important;
-        min-width: 300px !important;
-        max-width: none !important;
+        min-width: 250px !important;
         overflow: visible !important;
         padding: 0.5rem !important;
-        flex: 1 1 300px !important;
     }
     
     /* Fix text in metric containers */
@@ -1303,48 +1228,22 @@ st.markdown("""
         overflow-wrap: break-word !important;
     }
     
-    /* Prevent extreme text wrapping - More Aggressive */
+    /* Prevent extreme text wrapping */
     .stMarkdown p {
         word-break: break-word !important;
         hyphens: auto !important;
-        min-width: 300px !important;
-        white-space: normal !important;
-        overflow-wrap: break-word !important;
+        min-width: 200px !important;
     }
     
-    /* Fix column layout to prevent narrow widths - Enhanced */
+    /* Fix column layout to prevent narrow widths */
     .row-widget {
         min-width: 0 !important;
         flex: 1 1 auto !important;
-        display: flex !important;
-        flex-wrap: nowrap !important;
     }
     
     .row-widget > div {
-        min-width: 300px !important;
+        min-width: 200px !important;
         max-width: none !important;
-        flex: 1 1 300px !important;
-    }
-    
-    /* Force minimum widths on all container types */
-    .css-1r6slb0, .css-12oz5g7, .css-1kyxreq {
-        min-width: 300px !important;
-        flex: 1 1 300px !important;
-    }
-    
-    /* Override Streamlit's responsive breakpoints */
-    @media (max-width: 768px) {
-        .stColumn, [data-testid="column"] {
-            min-width: 280px !important;
-            width: 100% !important;
-        }
-    }
-    
-    /* Additional fix for markdown content in columns */
-    .stColumn .stMarkdown,
-    [data-testid="column"] .stMarkdown {
-        min-width: 250px !important;
-        width: 100% !important;
     }
     
     /* Code blocks */
@@ -1740,7 +1639,7 @@ with tab3:
     if uploaded_files:
         st.success(f"✅ {len(uploaded_files)} files ready for Signal AI processing")
         
-        with st.expander("View uploaded files", expanded=True):
+        with st.expander("View uploaded files", expanded=False):
             for file in uploaded_files:
                 col1, col2, col3 = st.columns([3, 1, 1])
                 with col1:
