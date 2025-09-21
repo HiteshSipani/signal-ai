@@ -975,6 +975,19 @@ st.markdown("""
         background: transparent !important;
     }
     
+    /* Additional fix for founder profile markdown content */
+    .streamlit-expanderContent .stMarkdown {
+        background: transparent !important;
+        color: #e2e8f0 !important;
+    }
+    
+    .streamlit-expanderContent .stMarkdown p,
+    .streamlit-expanderContent .stMarkdown strong,
+    .streamlit-expanderContent .stMarkdown b {
+        color: #e2e8f0 !important;
+        background: transparent !important;
+    }
+    
     /* Aggressive fix for all expander content */
     .streamlit-expanderContent * {
         color: #e2e8f0 !important;
