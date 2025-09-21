@@ -723,7 +723,7 @@ st.markdown("""
     }
     
     .main .block-container {
-        padding: 2rem;
+        padding: 1rem 2rem;
         max-width: 100%;
         background: transparent;
     }
@@ -770,9 +770,9 @@ st.markdown("""
     .hero-section {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         border-radius: 24px;
-        padding: 4rem 2rem;
+        padding: 2rem 2rem;
         text-align: center;
-        margin: 2rem 0;
+        margin: 1rem 0;
         border: 1px solid rgba(34, 197, 94, 0.3);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         position: relative;
@@ -813,8 +813,8 @@ st.markdown("""
         background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1));
         border: 1px solid rgba(139, 92, 246, 0.3);
         border-radius: 20px;
-        padding: 2rem;
-        margin: 2rem 0;
+        padding: 1.5rem;
+        margin: 1rem 0;
         text-align: center;
         backdrop-filter: blur(10px);
     }
@@ -824,8 +824,8 @@ st.markdown("""
         background: rgba(15, 23, 42, 0.8);
         border: 2px solid rgba(6, 182, 212, 0.3);
         border-radius: 20px;
-        padding: 2rem;
-        margin: 1rem 0;
+        padding: 1.5rem;
+        margin: 0.5rem 0;
         transition: all 0.3s ease;
         backdrop-filter: blur(10px);
     }
@@ -841,7 +841,7 @@ st.markdown("""
         background: rgba(15, 23, 42, 0.8);
         border: 1px solid rgba(34, 197, 94, 0.3);
         border-radius: 20px;
-        padding: 2rem;
+        padding: 1.5rem;
         text-align: center;
         transition: all 0.3s ease;
         backdrop-filter: blur(10px);
@@ -894,7 +894,7 @@ st.markdown("""
         background: rgba(15, 23, 42, 0.8) !important;
         border: 2px dashed rgba(6, 182, 212, 0.5) !important;
         border-radius: 16px !important;
-        padding: 2rem !important;
+        padding: 1rem !important;
     }
     
     .stFileUploader > div {
@@ -1221,7 +1221,7 @@ st.markdown("""
         min-width: 300px !important;
         max-width: none !important;
         overflow: visible !important;
-        padding: 1rem !important;
+        padding: 0.5rem !important;
         flex: 1 1 300px !important;
     }
     
