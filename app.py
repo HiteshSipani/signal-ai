@@ -333,112 +333,158 @@ def parse_json_response(response_text: str) -> Dict:
 def create_roadmap_timeline():
     """Create interactive roadmap timeline"""
     
-    # Roadmap data
+    # Updated roadmap data with correct dates
     roadmap_data = [
         # COMPLETED (Past)
         {
             "phase": "Foundation",
             "status": "COMPLETED",
-            "date": "Q4 2024",
+            "date": "Sep 2025",
             "title": "MVP Development",
             "description": "Core Gemini integration, file processing, basic analysis",
             "achievements": ["Multi-modal file processing", "JSON data extraction", "Basic investment memo generation"],
-            "color": "#10B981"
+            "color": "#10B981",
+            "position": 0
         },
         {
             "phase": "Foundation", 
             "status": "COMPLETED",
-            "date": "Q1 2025",
+            "date": "Sep 2025",
             "title": "Enhanced Analysis Engine",
             "description": "Improved prompts, comprehensive data extraction, UI polish",
             "achievements": ["4-pillar framework integration", "Enhanced financial metrics", "Professional UI/UX"],
-            "color": "#10B981"
+            "color": "#10B981",
+            "position": 1
         },
         
         # IN PROGRESS (Current)
         {
             "phase": "Growth",
             "status": "IN PROGRESS", 
-            "date": "Q2 2025",
+            "date": "Oct 2025",
             "title": "Multi-Agent Architecture",
             "description": "Implement specialized agents for different analysis tasks",
             "achievements": ["Supervisor Agent (Gemini 2.0 Pro)", "Specialist Agent (Fine-tuned Gemma)", "Research Agent (Vertex AI)"],
-            "color": "#F59E0B"
+            "color": "#F59E0B",
+            "position": 2
         },
         
         # PLANNED (Future)
         {
             "phase": "Growth",
             "status": "PLANNED",
-            "date": "Q3 2025", 
+            "date": "Oct 2025", 
             "title": "Production Platform",
             "description": "Vertex AI Pipelines, scalable infrastructure, enterprise features",
             "achievements": ["DAG-based workflows", "Real-time market data", "Batch processing"],
-            "color": "#6B7280"
+            "color": "#6B7280",
+            "position": 3
         },
         {
             "phase": "Scale",
             "status": "PLANNED", 
-            "date": "Q4 2025",
+            "date": "Nov 2025",
             "title": "Advanced Intelligence",
             "description": "Conversational AI, automated scheduling, predictive analytics",
             "achievements": ["Founder interview agent", "Predictive modeling", "Risk assessment AI"],
-            "color": "#6B7280"
+            "color": "#6B7280",
+            "position": 4
         },
         {
             "phase": "Scale",
             "status": "PLANNED",
-            "date": "Q1 2026",
+            "date": "Nov 2025",
             "title": "Enterprise Suite", 
             "description": "Full platform with collaboration, compliance, and advanced analytics",
             "achievements": ["Team collaboration", "Regulatory compliance", "Custom integrations"],
-            "color": "#6B7280"
+            "color": "#6B7280",
+            "position": 5
         }
     ]
     
-    # Create timeline chart
+    # Create connected timeline chart
     fig = go.Figure()
     
-    for i, item in enumerate(roadmap_data):
-        # Timeline bar
+    # Create the main timeline line
+    x_positions = [item['position'] for item in roadmap_data]
+    fig.add_trace(go.Scatter(
+        x=x_positions,
+        y=[0.5] * len(x_positions),
+        mode='lines',
+        line=dict(color='#E5E7EB', width=4),
+        showlegend=False,
+        hoverinfo='skip'
+    ))
+    
+    # Add milestone points and labels
+    for item in roadmap_data:
+        x_pos = item['position']
+        
+        # Milestone point
         fig.add_trace(go.Scatter(
-            x=[i, i],
-            y=[0, 1],
-            mode='lines+markers',
-            line=dict(color=item['color'], width=8),
-            marker=dict(size=15, color=item['color']),
+            x=[x_pos],
+            y=[0.5],
+            mode='markers',
+            marker=dict(
+                size=20,
+                color=item['color'],
+                line=dict(color='white', width=3)
+            ),
             hovertemplate=f"<b>{item['title']}</b><br>{item['date']}<br>{item['description']}<extra></extra>",
             showlegend=False
         ))
         
-        # Status indicators
-        status_y = 1.2 if item['status'] == 'COMPLETED' else (1.1 if item['status'] == 'IN PROGRESS' else 1.0)
+        # Status badge above the point
         fig.add_annotation(
-            x=i,
-            y=status_y,
-            text=f"<b>{item['title']}</b><br>{item['date']}<br><i>{item['status']}</i>",
-            showarrow=False,
-            font=dict(size=10, color=item['color']),
+            x=x_pos,
+            y=0.8,
+            text=f"<b>{item['title']}</b><br>{item['date']}",
+            showarrow=True,
+            arrowhead=2,
+            arrowsize=1,
+            arrowwidth=2,
+            arrowcolor=item['color'],
+            ax=0,
+            ay=-30,
+            font=dict(size=11, color=item['color']),
             bgcolor="white",
             bordercolor=item['color'],
-            borderwidth=1
-        )
+            borderwidth=2,
+            borderpad=4
+        ))
+        
+        # Status indicator below
+        status_emoji = "✅" if item['status'] == 'COMPLETED' else ("🔄" if item['status'] == 'IN PROGRESS' else "📋")
+        fig.add_annotation(
+            x=x_pos,
+            y=0.2,
+            text=f"{status_emoji} {item['status']}",
+            showarrow=False,
+            font=dict(size=10, color=item['color']),
+            bgcolor=f"{item['color']}20",
+            bordercolor=item['color'],
+            borderwidth=1,
+            borderpad=2
+        ))
     
+    # Update layout for better appearance
     fig.update_layout(
-        title="Signal AI Development Roadmap",
+        title="Signal AI Development Roadmap - Connected Timeline",
         title_font_size=24,
+        title_x=0.5,
         xaxis=dict(
             showgrid=False,
             showticklabels=False,
-            zeroline=False
+            zeroline=False,
+            range=[-0.5, len(roadmap_data) - 0.5]
         ),
         yaxis=dict(
             showgrid=False,
             showticklabels=False,
             zeroline=False,
-            range=[-0.2, 1.5]
+            range=[0, 1]
         ),
-        height=400,
+        height=300,
         plot_bgcolor="white",
         paper_bgcolor="white",
         margin=dict(l=50, r=50, t=80, b=50)
