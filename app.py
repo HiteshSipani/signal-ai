@@ -950,8 +950,58 @@ st.markdown("""
     /* Fix expander text */
     .streamlit-expanderContent p, 
     .streamlit-expanderContent div,
-    .streamlit-expanderContent span {
+    .streamlit-expanderContent span,
+    .streamlit-expanderContent [data-testid] {
         color: #e2e8f0 !important;
+        background: transparent !important;
+    }
+    
+    /* Specific fix for file list in expanders */
+    .streamlit-expanderContent [data-testid="column"] {
+        background: transparent !important;
+        color: #e2e8f0 !important;
+    }
+    
+    .streamlit-expanderContent [data-testid="column"] > div {
+        color: #e2e8f0 !important;
+        background: transparent !important;
+    }
+    
+    /* Force all text in expanders to be visible */
+    details[open] div,
+    details[open] span,
+    details[open] p {
+        color: #e2e8f0 !important;
+        background: transparent !important;
+    }
+    
+    /* Aggressive fix for all expander content */
+    .streamlit-expanderContent * {
+        color: #e2e8f0 !important;
+        background: transparent !important;
+    }
+    
+    /* Specific targeting for Streamlit components in expanders */
+    .streamlit-expanderContent .stText,
+    .streamlit-expanderContent .stMarkdown,
+    .streamlit-expanderContent [data-testid="stText"],
+    .streamlit-expanderContent [data-testid="stMarkdown"] {
+        color: #e2e8f0 !important;
+        background: transparent !important;
+    }
+    
+    /* Target all possible text containers */
+    .streamlit-expanderContent .element-container,
+    .streamlit-expanderContent .stColumn,
+    .streamlit-expanderContent [data-testid="column"] {
+        background: transparent !important;
+    }
+    
+    .streamlit-expanderContent .element-container *,
+    .streamlit-expanderContent .stColumn *,
+    .streamlit-expanderContent [data-testid="column"] * {
+        color: #e2e8f0 !important;
+        background: transparent !important;
     }
     
     /* Metric components */
