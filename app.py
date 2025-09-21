@@ -984,6 +984,14 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3) !important;
     }
     
+    /* Fix expander header text visibility when expanded */
+    .streamlit-expanderHeader p,
+    .streamlit-expanderHeader span,
+    .streamlit-expanderHeader div {
+        color: #e2e8f0 !important;
+        font-weight: 600 !important;
+    }
+    
     .streamlit-expanderContent {
         background: rgba(15, 23, 42, 0.9) !important;
         border: 1px solid rgba(6, 182, 212, 0.3) !important;
@@ -1092,13 +1100,15 @@ st.markdown("""
         background: transparent !important;
     }
     
-    /* Metric components */
+    /* Metric components with better sizing and tooltip fixes */
     [data-testid="metric-container"] {
         background: rgba(15, 23, 42, 0.8) !important;
         border: 1px solid rgba(34, 197, 94, 0.3) !important;
         border-radius: 16px !important;
-        padding: 1rem !important;
+        padding: 1.5rem !important;
         backdrop-filter: blur(10px);
+        min-height: 120px !important;
+        width: 100% !important;
     }
     
     [data-testid="metric-container"] > div {
@@ -1108,28 +1118,111 @@ st.markdown("""
     [data-testid="metric-container"] label {
         color: #94a3b8 !important;
         font-weight: 600 !important;
+        font-size: 0.85rem !important;
+        line-height: 1.4 !important;
+        word-wrap: break-word !important;
+        white-space: normal !important;
     }
     
     [data-testid="metric-container"] [data-testid="metric-value"] {
         color: #06b6d4 !important;
-        font-size: 1.5rem !important;
+        font-size: 1.4rem !important;
         font-weight: 700 !important;
         text-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
+        line-height: 1.2 !important;
+        word-wrap: break-word !important;
+        white-space: normal !important;
+        overflow-wrap: break-word !important;
     }
     
     [data-testid="metric-container"] [data-testid="metric-delta"] {
         color: #22c55e !important;
         font-weight: 500 !important;
+        font-size: 0.9rem !important;
     }
     
-    /* Fix all text elements */
+    /* Fix tooltip visibility */
+    .stTooltipIcon {
+        color: #94a3b8 !important;
+        opacity: 0.8 !important;
+    }
+    
+    .stTooltipIcon:hover {
+        color: #06b6d4 !important;
+        opacity: 1 !important;
+    }
+    
+    /* Tooltip content styling */
+    .stTooltipContent {
+        background: rgba(15, 23, 42, 0.95) !important;
+        border: 1px solid rgba(6, 182, 212, 0.4) !important;
+        border-radius: 8px !important;
+        color: #e2e8f0 !important;
+        padding: 1rem !important;
+        font-size: 0.9rem !important;
+        line-height: 1.4 !important;
+        max-width: 300px !important;
+        word-wrap: break-word !important;
+        backdrop-filter: blur(10px) !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    /* Alternative tooltip targeting */
+    [role="tooltip"] {
+        background: rgba(15, 23, 42, 0.95) !important;
+        border: 1px solid rgba(6, 182, 212, 0.4) !important;
+        border-radius: 8px !important;
+        color: #e2e8f0 !important;
+        padding: 1rem !important;
+        font-size: 0.9rem !important;
+        line-height: 1.4 !important;
+        max-width: 300px !important;
+        word-wrap: break-word !important;
+        backdrop-filter: blur(10px) !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    /* Fix all text elements and prevent truncation */
     .stMarkdown, .stText, p, div, span, li {
         color: #e2e8f0 !important;
+        word-wrap: break-word !important;
+        white-space: normal !important;
+        overflow-wrap: break-word !important;
+        line-height: 1.5 !important;
     }
     
-    /* Fix headers */
+    /* Fix headers with better sizing */
     h1, h2, h3, h4, h5, h6 {
         color: #e2e8f0 !important;
+        word-wrap: break-word !important;
+        white-space: normal !important;
+        overflow-wrap: break-word !important;
+        line-height: 1.3 !important;
+    }
+    
+    /* Specific fixes for long text in containers */
+    .element-container {
+        width: 100% !important;
+        overflow: visible !important;
+    }
+    
+    .stColumn {
+        width: 100% !important;
+        overflow: visible !important;
+    }
+    
+    [data-testid="column"] {
+        width: 100% !important;
+        overflow: visible !important;
+        padding: 0.5rem !important;
+    }
+    
+    /* Fix text in metric containers */
+    [data-testid="metric-container"] * {
+        overflow: visible !important;
+        word-wrap: break-word !important;
+        white-space: normal !important;
+        overflow-wrap: break-word !important;
     }
     
     /* Code blocks */
