@@ -1,7 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
 import os
-from dotenv import load_dotenv
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -12,24 +11,33 @@ from typing import Dict, List, Any
 import tempfile
 import time
 
-# --- CONFIGURATION ---
-load_dotenv()
-
-# Configure page to use wide layout from the start
+# --- CONFIGURATION FOR CLOUD DEPLOYMENT ---
 st.set_page_config(
     page_title="Signal AI - VC Investment Analyst", 
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
+# Configure Gemini API using Streamlit secrets
 try:
-    gemini_api_key = os.getenv("GEMINI_API_KEY")
+    # Try to get API key from Streamlit secrets (for cloud deployment)
+    if hasattr(st, 'secrets') and 'GEMINI_API_KEY' in st.secrets:
+        gemini_api_key = st.secrets["GEMINI_API_KEY"]
+    # Fallback to environment variable (for local development)
+    else:
+        gemini_api_key = os.getenv("GEMINI_API_KEY")
+    
     if not gemini_api_key:
-        st.error("GEMINI_API_KEY not found. Please make sure your .env file is set up correctly.")
+        st.error("⚠️ GEMINI_API_KEY not configured. Please add it to Streamlit secrets.")
+        st.info("Go to your app settings → Secrets and add: GEMINI_API_KEY = 'your-api-key'")
+        st.stop()
     else:
         genai.configure(api_key=gemini_api_key)
+        st.success("✅ Gemini API configured successfully")
+        
 except Exception as e:
-    st.error(f"API Key configuration error: {e}. Please check your .env file and API key.")
+    st.error(f"❌ API Key configuration error: {e}")
+    st.stop()
 
 # --- GEMINI FILE PROCESSING FUNCTIONS ---
 
