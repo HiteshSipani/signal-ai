@@ -957,7 +957,7 @@ st.markdown("""
     
     /* Enhanced Expander/Collapsible styling with states */
     .streamlit-expanderHeader {
-        background: rgba(15, 23, 42, 0.8) !important;
+        background: rgba(6, 182, 212, 0.1) !important;
         border: 1px solid rgba(6, 182, 212, 0.3) !important;
         border-radius: 12px !important;
         color: #e2e8f0 !important;
@@ -974,7 +974,7 @@ st.markdown("""
     
     .streamlit-expanderHeader[aria-expanded="false"] {
         border-radius: 12px !important;
-        background: rgba(15, 23, 42, 0.6) !important;
+        background: rgba(6, 182, 212, 0.1) !important;
     }
     
     .streamlit-expanderHeader[aria-expanded="true"] {
@@ -1143,7 +1143,7 @@ st.markdown("""
     
     /* Fix tooltip visibility */
     .stTooltipIcon {
-        color: #94a3b8 !important;
+        color: #ffffff !important;
         opacity: 0.8 !important;
     }
     
@@ -1172,7 +1172,7 @@ st.markdown("""
         background: rgba(15, 23, 42, 0.95) !important;
         border: 1px solid rgba(6, 182, 212, 0.4) !important;
         border-radius: 8px !important;
-        color: #e2e8f0 !important;
+        color: #fcfcfc !important;
         padding: 1rem !important;
         font-size: 0.9rem !important;
         line-height: 1.4 !important;
@@ -1203,16 +1203,19 @@ st.markdown("""
     /* Specific fixes for long text in containers */
     .element-container {
         width: 100% !important;
+        min-width: 200px !important;
         overflow: visible !important;
     }
     
     .stColumn {
         width: 100% !important;
+        min-width: 250px !important;
         overflow: visible !important;
     }
     
     [data-testid="column"] {
         width: 100% !important;
+        min-width: 250px !important;
         overflow: visible !important;
         padding: 0.5rem !important;
     }
@@ -1223,6 +1226,24 @@ st.markdown("""
         word-wrap: break-word !important;
         white-space: normal !important;
         overflow-wrap: break-word !important;
+    }
+    
+    /* Prevent extreme text wrapping */
+    .stMarkdown p {
+        word-break: break-word !important;
+        hyphens: auto !important;
+        min-width: 200px !important;
+    }
+    
+    /* Fix column layout to prevent narrow widths */
+    .row-widget {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+    }
+    
+    .row-widget > div {
+        min-width: 200px !important;
+        max-width: none !important;
     }
     
     /* Code blocks */
@@ -1618,7 +1639,7 @@ with tab3:
     if uploaded_files:
         st.success(f"✅ {len(uploaded_files)} files ready for Signal AI processing")
         
-        with st.expander("View uploaded files", expanded=True):
+        with st.expander("View uploaded files", expanded=False):
             for file in uploaded_files:
                 col1, col2, col3 = st.columns([3, 1, 1])
                 with col1:
