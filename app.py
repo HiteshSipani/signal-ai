@@ -933,7 +933,7 @@ st.markdown("""
     
     .streamlit-expanderHeader[aria-expanded="true"] {
         border-radius: 12px 12px 0 0 !important;
-        background: rgba(6, 182, 212, 0.1) !important;
+        background: rgba(15, 23, 42, 0.6) !important;
         border-color: rgba(6, 182, 212, 0.5) !important;
         box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3) !important;
     }
