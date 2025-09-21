@@ -1378,6 +1378,41 @@ st.markdown("""
         color: #22c55e !important;
     }
     
+    /* Fix KaTeX rendering issues - prevent vertical text */
+    .katex .base,
+    .katex .strut {
+        display: inline !important;
+        vertical-align: baseline !important;
+    }
+    
+    .katex {
+        display: inline-block !important;
+        text-align: left !important;
+        white-space: nowrap !important;
+    }
+    
+    .katex .mord,
+    .katex .mop,
+    .katex .mbin,
+    .katex .mrel,
+    .katex .mopen,
+    .katex .mclose,
+    .katex .mpunct {
+        display: inline !important;
+    }
+    
+    /* Ensure math notation displays horizontally */
+    .katex-display {
+        display: block !important;
+        text-align: center !important;
+        margin: 1em 0 !important;
+    }
+    
+    .katex-html {
+        display: inline-block !important;
+        white-space: nowrap !important;
+    }
+    
     /* Checkbox and radio */
     .stCheckbox > label {
         color: #e2e8f0 !important;
