@@ -843,30 +843,108 @@ st.markdown("""
         box-shadow: 0 12px 35px rgba(6, 182, 212, 0.6);
     }
     
-    /* File Upload */
+    /* File Upload Styling */
     .stFileUploader {
-        background: rgba(15, 23, 42, 0.8);
-        border: 2px dashed rgba(6, 182, 212, 0.5);
-        border-radius: 16px;
-        padding: 2rem;
+        background: rgba(15, 23, 42, 0.8) !important;
+        border: 2px dashed rgba(6, 182, 212, 0.5) !important;
+        border-radius: 16px !important;
+        padding: 2rem !important;
+    }
+    
+    .stFileUploader > div {
+        background: transparent !important;
+        color: #e2e8f0 !important;
+    }
+    
+    .stFileUploader label {
+        color: #e2e8f0 !important;
+        font-weight: 600 !important;
+    }
+    
+    .stFileUploader [data-testid="stFileUploaderDropzone"] {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border: 2px dashed rgba(6, 182, 212, 0.4) !important;
+        border-radius: 12px !important;
+        color: #e2e8f0 !important;
+    }
+    
+    .stFileUploader [data-testid="stFileUploaderDropzone"]:hover {
+        border-color: rgba(6, 182, 212, 0.8) !important;
+        background: rgba(6, 182, 212, 0.1) !important;
+    }
+    
+    .stFileUploader [data-testid="stFileUploaderDropzone"] div {
+        color: #e2e8f0 !important;
+    }
+    
+    .stFileUploader [data-testid="stFileUploaderDropzone"] span {
+        color: #94a3b8 !important;
+    }
+    
+    .stFileUploader button {
+        background: linear-gradient(135deg, #06b6d4, #0ea5e9) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+    }
+    
+    /* File list styling */
+    .stFileUploader [data-testid="stFileUploaderFile"] {
+        background: rgba(15, 23, 42, 0.9) !important;
+        border: 1px solid rgba(6, 182, 212, 0.3) !important;
+        border-radius: 8px !important;
+        color: #e2e8f0 !important;
+        margin: 0.5rem 0 !important;
+    }
+    
+    .stFileUploader [data-testid="stFileUploaderFile"] div {
+        color: #e2e8f0 !important;
+    }
+    
+    .stFileUploader [data-testid="stFileUploaderFile"] button {
+        background: rgba(239, 68, 68, 0.8) !important;
+        border-radius: 6px !important;
     }
     
     /* Fix Streamlit Components for Dark Theme */
     
-    /* Expander/Collapsible styling */
+    /* Enhanced Expander/Collapsible styling with states */
     .streamlit-expanderHeader {
         background: rgba(15, 23, 42, 0.8) !important;
         border: 1px solid rgba(6, 182, 212, 0.3) !important;
         border-radius: 12px !important;
         color: #e2e8f0 !important;
+        transition: all 0.3s ease !important;
+        cursor: pointer !important;
+    }
+    
+    .streamlit-expanderHeader:hover {
+        background: rgba(6, 182, 212, 0.1) !important;
+        border-color: rgba(6, 182, 212, 0.6) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    .streamlit-expanderHeader[aria-expanded="false"] {
+        border-radius: 12px !important;
+        background: rgba(15, 23, 42, 0.6) !important;
+    }
+    
+    .streamlit-expanderHeader[aria-expanded="true"] {
+        border-radius: 12px 12px 0 0 !important;
+        background: rgba(6, 182, 212, 0.1) !important;
+        border-color: rgba(6, 182, 212, 0.5) !important;
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3) !important;
     }
     
     .streamlit-expanderContent {
         background: rgba(15, 23, 42, 0.9) !important;
-        border: 1px solid rgba(6, 182, 212, 0.2) !important;
+        border: 1px solid rgba(6, 182, 212, 0.3) !important;
         border-top: none !important;
         border-radius: 0 0 12px 12px !important;
         color: #e2e8f0 !important;
+        backdrop-filter: blur(10px) !important;
     }
     
     /* Fix expander text */
@@ -1347,7 +1425,6 @@ with tab3:
                     st.session_state.analysis_complete = True
                     
                     st.success("🎯 Signal AI Analysis Complete!")
-                    st.balloons()
                 else:
                     st.error(f"Analysis failed: {analysis_result}")
     
