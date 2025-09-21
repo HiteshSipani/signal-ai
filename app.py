@@ -723,9 +723,37 @@ st.markdown("""
     }
     
     .main .block-container {
-        padding: 1rem 2rem;
+        padding: 0.5rem 1rem;
         max-width: 100%;
         background: transparent;
+    }
+    
+    /* Reduce default Streamlit spacing */
+    .element-container {
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .stMarkdown {
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .stHeader {
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Remove excessive gaps between sections */
+    .block-container > div {
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Reduce spacing around specific elements */
+    h1, h2, h3 {
+        margin-top: 1rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    p {
+        margin-bottom: 0.5rem !important;
     }
     
     /* Hide Streamlit Elements */
@@ -770,13 +798,55 @@ st.markdown("""
     .hero-section {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         border-radius: 24px;
-        padding: 2rem 2rem;
+        padding: 1.5rem 2rem;
         text-align: center;
-        margin: 1rem 0;
+        margin: 0.5rem 0;
         border: 1px solid rgba(34, 197, 94, 0.3);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         position: relative;
         overflow: hidden;
+    }
+    
+    /* Aggressive spacing reduction for all Streamlit elements */
+    .stApp > div > div > div > div {
+        gap: 0.25rem !important;
+    }
+    
+    .stVerticalBlock {
+        gap: 0.25rem !important;
+    }
+    
+    .stHorizontalBlock {
+        gap: 0.5rem !important;
+    }
+    
+    /* Remove default margins from common elements */
+    .stButton {
+        margin-bottom: 0.25rem !important;
+    }
+    
+    .stSelectbox {
+        margin-bottom: 0.25rem !important;
+    }
+    
+    .stTextInput {
+        margin-bottom: 0.25rem !important;
+    }
+    
+    .stFileUploader {
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .stInfo {
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .stSuccess {
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .stError {
+        margin-bottom: 0.5rem !important;
     }
     
     .hero-section::before {
