@@ -39,26 +39,92 @@ except Exception as e:
 # --- GEMINI FILE PROCESSING FUNCTIONS ---
 
 def upload_file_to_gemini(file_data, file_name: str):
-    """Upload file directly to Gemini for processing"""
+    """Upload file directly to Gemini for processing with enhanced error handling"""
     try:
-        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file_name)[1]) as tmp_file:
+        # Check file size (Gemini has ~20MB limit for most files)
+        file_size_mb = len(file_data) / (1024 * 1024)
+        if file_size_mb > 20:
+            st.error(f"❌ File {file_name} is too large ({file_size_mb:.1f}MB). Gemini supports files up to 20MB.")
+            return None
+        
+        # Check for empty files
+        if len(file_data) == 0:
+            st.error(f"❌ File {file_name} is empty.")
+            return None
+        
+        # Get file extension for validation
+        file_ext = os.path.splitext(file_name)[1].lower()
+        
+        # Supported file types by Gemini
+        supported_extensions = {'.pdf', '.docx', '.doc', '.txt', '.csv', '.png', '.jpg', '.jpeg', '.gif', '.webp'}
+        if file_ext not in supported_extensions:
+            st.warning(f"⚠️ File {file_name} has extension {file_ext} which may not be fully supported by Gemini.")
+        
+        # Create temporary file with proper handling
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext) as tmp_file:
             tmp_file.write(file_data)
+            tmp_file.flush()  # Ensure data is written
             tmp_file_path = tmp_file.name
         
-        uploaded_file = genai.upload_file(tmp_file_path, display_name=file_name)
+        st.info(f"📤 Uploading {file_name} ({file_size_mb:.1f}MB) to Gemini...")
         
-        while uploaded_file.state.name == "PROCESSING":
+        # Upload with specific error handling
+        try:
+            uploaded_file = genai.upload_file(tmp_file_path, display_name=file_name)
+        except Exception as upload_error:
+            os.unlink(tmp_file_path)  # Clean up temp file
+            
+            # Specific error messages for common issues
+            error_msg = str(upload_error).lower()
+            if "400" in error_msg and "invalid argument" in error_msg:
+                st.error(f"❌ {file_name}: Invalid file content. This could be due to:")
+                st.markdown("""
+                - Corrupted file
+                - Unsupported file format (even with correct extension)
+                - File contains content that violates safety policies
+                - File encoding issues
+                """)
+            elif "413" in error_msg or "too large" in error_msg:
+                st.error(f"❌ {file_name}: File too large for Gemini API")
+            elif "quota" in error_msg or "rate" in error_msg:
+                st.error(f"❌ {file_name}: API quota exceeded. Try again later.")
+            else:
+                st.error(f"❌ {file_name}: Upload failed - {upload_error}")
+            return None
+        
+        # Wait for processing with timeout
+        max_wait_time = 60  # 60 seconds timeout
+        wait_time = 0
+        
+        while uploaded_file.state.name == "PROCESSING" and wait_time < max_wait_time:
             time.sleep(2)
+            wait_time += 2
             uploaded_file = genai.get_file(uploaded_file.name)
+            
+        if wait_time >= max_wait_time:
+            st.error(f"❌ {file_name}: Processing timeout after {max_wait_time} seconds")
+            os.unlink(tmp_file_path)
+            return None
         
         if uploaded_file.state.name == "FAILED":
+            st.error(f"❌ {file_name}: Processing failed. File may be corrupted or unsupported.")
+            os.unlink(tmp_file_path)
             return None
             
+        # Clean up temp file
         os.unlink(tmp_file_path)
+        st.success(f"✅ {file_name}: Successfully uploaded and processed")
         return uploaded_file
         
     except Exception as e:
-        st.error(f"File upload failed for {file_name}: {e}")
+        # Clean up temp file if it exists
+        if 'tmp_file_path' in locals():
+            try:
+                os.unlink(tmp_file_path)
+            except:
+                pass
+        
+        st.error(f"❌ Unexpected error with {file_name}: {e}")
         return None
 
 def analyze_with_gemini_files(gemini_files):
@@ -182,42 +248,116 @@ def analyze_with_gemini_files(gemini_files):
         st.error(f"Analysis failed: {e}")
         return f"Error: {e}"
 
+def validate_file_content(file_data, file_name: str) -> bool:
+    """Validate file content before sending to Gemini"""
+    try:
+        file_ext = os.path.splitext(file_name)[1].lower()
+        
+        # Basic validation for text files
+        if file_ext in ['.txt', '.csv']:
+            try:
+                # Try to decode as UTF-8
+                content = file_data.decode('utf-8')
+                # Check for minimum content
+                if len(content.strip()) < 10:
+                    st.warning(f"⚠️ {file_name}: File appears to have very little text content")
+                    return False
+            except UnicodeDecodeError:
+                try:
+                    # Try other common encodings
+                    content = file_data.decode('latin-1')
+                except:
+                    st.error(f"❌ {file_name}: Text file has encoding issues")
+                    return False
+        
+        # Check for PDF magic number
+        elif file_ext == '.pdf':
+            if not file_data.startswith(b'%PDF'):
+                st.error(f"❌ {file_name}: Not a valid PDF file")
+                return False
+        
+        # Check for image magic numbers
+        elif file_ext in ['.jpg', '.jpeg']:
+            if not file_data.startswith(b'\xff\xd8\xff'):
+                st.error(f"❌ {file_name}: Not a valid JPEG file")
+                return False
+        elif file_ext == '.png':
+            if not file_data.startswith(b'\x89PNG\r\n\x1a\n'):
+                st.error(f"❌ {file_name}: Not a valid PNG file")
+                return False
+        
+        # Check for Office document signatures
+        elif file_ext in ['.docx', '.doc']:
+            # DOCX files are ZIP archives, DOC files have specific signatures
+            if file_ext == '.docx' and not file_data.startswith(b'PK'):
+                st.error(f"❌ {file_name}: Not a valid DOCX file")
+                return False
+            elif file_ext == '.doc' and not (file_data.startswith(b'\xd0\xcf\x11\xe0') or file_data.startswith(b'\x0d\x44\x4f\x43')):
+                st.error(f"❌ {file_name}: Not a valid DOC file")
+                return False
+        
+        return True
+        
+    except Exception as e:
+        st.warning(f"⚠️ {file_name}: Could not validate file content - {e}")
+        return True  # Allow processing but warn user
+
 def process_files_with_gemini(uploaded_files):
-    """Enhanced file processing with better error handling"""
+    """Enhanced file processing with better error handling and validation"""
     if not uploaded_files:
         return ""
     
+    st.markdown("### File Processing Status")
+    
     gemini_files = []
+    failed_files = []
     
     for uploaded_file in uploaded_files:
-        st.info(f"Processing {uploaded_file.name}...")
+        st.markdown(f"**Processing: {uploaded_file.name}**")
         
         try:
+            # Read file data
             file_data = uploaded_file.read()
-            uploaded_file.seek(0)
+            uploaded_file.seek(0)  # Reset file pointer
             
+            # Validate file content
+            if not validate_file_content(file_data, uploaded_file.name):
+                failed_files.append(uploaded_file.name)
+                continue
+            
+            # Upload to Gemini
             gemini_file = upload_file_to_gemini(file_data, uploaded_file.name)
             
             if gemini_file:
                 gemini_files.append(gemini_file)
-                st.success(f"Successfully uploaded {uploaded_file.name}")
             else:
-                st.warning(f"Failed to upload {uploaded_file.name}")
+                failed_files.append(uploaded_file.name)
                 
         except Exception as e:
-            st.error(f"Error processing {uploaded_file.name}: {e}")
+            st.error(f"❌ Error processing {uploaded_file.name}: {e}")
+            failed_files.append(uploaded_file.name)
+    
+    # Summary of processing results
+    if failed_files:
+        st.error(f"❌ Failed to process {len(failed_files)} files:")
+        for failed_file in failed_files:
+            st.write(f"  • {failed_file}")
     
     if not gemini_files:
-        st.error("No files were successfully processed")
+        st.error("❌ No files were successfully processed. Please check file formats and content.")
         return ""
     
+    st.success(f"✅ Successfully processed {len(gemini_files)} out of {len(uploaded_files)} files")
+    
+    # Proceed with analysis
     analysis_result = analyze_with_gemini_files(gemini_files)
     
+    # Clean up Gemini files
     for gemini_file in gemini_files:
         try:
             genai.delete_file(gemini_file.name)
         except:
-            pass
+            pass  # Ignore cleanup errors
     
     return analysis_result
 
@@ -1663,6 +1803,38 @@ with tab3:
     # File upload section (original functionality)
     st.markdown("## Upload Company Data Room")
     st.info("**Current:** Single-agent processing with Gemini 2.5 Pro | **Coming Oct:** Multi-agent architecture with specialized models")
+    
+    # Troubleshooting information
+    with st.expander("🛠️ Troubleshooting File Upload Issues", expanded=False):
+        st.markdown("""
+        **Common reasons for "400 Invalid Argument" errors:**
+        
+        **📏 File Size Issues:**
+        - Maximum file size: 20MB per file
+        - Large PDFs or high-resolution images may exceed limits
+        
+        **📄 File Format Issues:**
+        - Corrupted files (even with correct extensions)
+        - Password-protected PDFs or documents
+        - Unusual encoding in text files
+        - Files with malformed headers
+        
+        **🔒 Content Restrictions:**
+        - Files containing inappropriate content
+        - Documents with embedded malicious content
+        - Files with unusual or proprietary formats
+        
+        **💡 Solutions:**
+        - Try uploading files one at a time to identify problematic ones
+        - Reduce image resolution or compress PDFs
+        - Convert documents to standard formats (PDF, DOCX, TXT)
+        - Check file integrity by opening in standard applications first
+        - Remove password protection from documents
+        
+        **✅ Supported Formats:**
+        - Documents: PDF, DOCX, DOC, TXT, CSV
+        - Images: PNG, JPG, JPEG, GIF, WEBP
+        """)
     
     uploaded_files = st.file_uploader(
         "Upload startup documents for comprehensive analysis",
