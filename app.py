@@ -1004,6 +1004,35 @@ st.markdown("""
         background: transparent !important;
     }
     
+    /* Specific fix for founder profile content */
+    .streamlit-expanderContent [data-testid="column"] div,
+    .streamlit-expanderContent [data-testid="column"] p,
+    .streamlit-expanderContent [data-testid="column"] span,
+    .streamlit-expanderContent [data-testid="column"] strong,
+    .streamlit-expanderContent [data-testid="column"] b {
+        color: #e2e8f0 !important;
+        background: transparent !important;
+    }
+    
+    /* Force override any inherited styles */
+    [data-testid="stExpander"] div[data-testid="column"] {
+        background: transparent !important;
+    }
+    
+    [data-testid="stExpander"] div[data-testid="column"] * {
+        color: #e2e8f0 !important;
+        background: transparent !important;
+        border: none !important;
+    }
+    
+    /* Target markdown content specifically */
+    [data-testid="stExpander"] .stMarkdown p,
+    [data-testid="stExpander"] .stMarkdown div,
+    [data-testid="stExpander"] .stMarkdown strong {
+        color: #e2e8f0 !important;
+        background: transparent !important;
+    }
+    
     /* Metric components */
     [data-testid="metric-container"] {
         background: rgba(15, 23, 42, 0.8) !important;
