@@ -451,7 +451,7 @@ def create_roadmap_timeline():
             bordercolor=item['color'],
             borderwidth=2,
             borderpad=4
-        ))
+        )
         
         # Status indicator below
         status_emoji = "✅" if item['status'] == 'COMPLETED' else ("🔄" if item['status'] == 'IN PROGRESS' else "📋")
@@ -465,7 +465,7 @@ def create_roadmap_timeline():
             bordercolor=item['color'],
             borderwidth=1,
             borderpad=2
-        ))
+        )
     
     # Update layout for better appearance
     fig.update_layout(
